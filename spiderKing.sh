@@ -29,9 +29,9 @@ function analizingCorrectPathWalk(){
   path=$(echo $line | awk '{print $2}' | sed 's#\.\/#\/#g' | sed 's#\/\/#\/#g' | sed 's#\/\/#\/#g');
 
    if [[ "$path" != /* ]];then
-   	echo "[1 Ajustando path] $path" # DEBUG
+   	echo "[Fixing path] $path" # DEBUG
     path=$(echo "/"$path)
-    echo "[2 Ajustando path] $path" # DEBUG
+    echo "[Fixed to] $path" # DEBUG
    fi
 
    if [[ "$url" =~ \/$ ]];then
