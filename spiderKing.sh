@@ -2,7 +2,7 @@
 
 fileInput=$1;
 
-function gospider(){
+function gospiderPlus(){
  printf '[Gospidering]'
  spider=$(timeout 2 gospider -S $1 -d 3 -c 300 2>/dev/null | anew)
  echo -e "$spider"
@@ -42,4 +42,4 @@ function onlyPathsUp(){
  httpx -silent -threads 300 -content-length -content-type
 }
 
-gospider $fileInput
+gospiderPlus $fileInput
