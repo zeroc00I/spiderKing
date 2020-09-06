@@ -3,23 +3,23 @@
 fileInput=$1;
 
 function gospiderPlus(){
- printf '[Gospidering]'
- spider=$(timeout 2 gospider -S $1 -d 3 -c 300 2>/dev/null | anew)
- echo -e "$spider"
- juicyPathsFromGospider "$spider";
+ printf '\n[Gospidering]'
+ spider=$(timeout 12 gospider -S $1 -d 3 -c 300)
+ internalPathsRemovedDots=$(echo -e "$spider" | sed 's#\.\/#\/#g')
+ juicyPathsFromGospider "$internalPathsRemovedDots";
 }
 
 function juicyPathsFromGospider(){
- printf '[JuicyPaths]'
- internalPaths=$(echo -e "$1" | tr ']' ' ' | sed 's#\.\/#\/#g' | awk '/linkfinder/{print $4" "$NF}')
- echo -e "$internalPaths"
- exit
- #awk -F/ '{print $1"//"$3"/"$NF}'
- #analizingCorrectPathWalk "$internalPaths"
+ printf '\n[JuicyPaths]'
+ internalPaths=$(echo -e "$1" | tr ']' ' ' | awk '/linkfinder/{print $4" "$NF}' )
+ [ -z "$internalPaths" ] && printf "\n[Not Found] Internal Paths\n" && exit
+ 
+ echo -e "$internalPaths" | sed 's#\.\/#\/#g' | sed 's#\/\/#\/#g' | sed 's#\/\/#\/#g'
+ analizingCorrectPathWalk "$internalPaths"
 }
 
 function analizingCorrectPathWalk(){
- printf '[Analizing Valid Path Walk]'
+ printf '\n[Analizing Valid Path Walk]'
  
  echo -e "$1" | while read line; do 
   url=$(echo $line | awk '{print $1}');
