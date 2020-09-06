@@ -6,6 +6,7 @@ function gospiderPlus(){
  printf '\n[Gospidering]'
  spider=$(timeout 20 gospider -S "$1" -d 3 -c 300)
  internalPathsRemovedDots=$(echo -e "$spider" | sed 's#\.\/#\/#g')
+ #[MOCK] internalPathsRemovedDots="[linkfinder] - [from: https://painel.kinghost.com.br/dist/bundle.js?] - ./v2015/js/scripts/gerenciar.vps.js"
  juicyPathsFromGospider "$internalPathsRemovedDots";
 }
 
@@ -28,12 +29,16 @@ function analizingCorrectPathWalk(){
   urlCount=$(echo $url | awk -F/ '{print NF-2}');
   path=$(echo $line | awk '{print $2}' | sed 's#\.\/#\/#g' | sed 's#\/\/#\/#g' | sed 's#\/\/#\/#g');
 
-   if [[ "$path" != "^/" ]];then
+   if [[ "$path" != /* ]];then
+   	echo "[1 Ajustando path] $path" # DEBUG
     path=$(echo "/"$path)
+    echo "[2 Ajustando path] $path" # DEBUG
    fi
 
    if [[ "$url" =~ \/$ ]];then
+   	echo "[1 Ajustando url] $url" # DEBUG
     url=$(echo "$url" | sed 's#.$##g')
+    echo "[2 Ajustando url] $url" # DEBUG
    fi
 
    if [[ "$urlCount" -gt "1" && "$path" != *"http"* && "$path" != *"locale"* && url != *"locale"* ]];then
@@ -52,7 +57,7 @@ function analizingCorrectPathWalk(){
 function onlyPathsUp(){
  printf '\n[onlyPathsUp]\n'
  echo -e "$1" | head -n 100
- echo -e "$1" | grep -v "/.*.js.*/" | grep -v "[a-z]\{2\}\-[a-z]\{2\}" |
+ echo -e "$1" | grep -v "/.*\.js.*/" | grep -v "[a-z]\{2\}\-[a-z]\{2\}" |
  anew | 
  httpx -silent -threads 300 -follow-redirects -content-length -status-code | grep 200
 }
