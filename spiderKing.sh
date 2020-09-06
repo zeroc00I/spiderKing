@@ -4,9 +4,8 @@ fileInput=$1;
 
 function gospiderPlus(){
  printf '\n[Gospidering]'
- spider=$(timeout 20 gospider -S "$1" -d 3 -c 300)
+ spider=$(gospider -a -S "$1" -d 3 -c 300)
  internalPathsRemovedDots=$(echo -e "$spider" | sed 's#\.\/#\/#g')
- #[MOCK] internalPathsRemovedDots="[linkfinder] - [from: https://painel.kinghost.com.br/dist/bundle.js?] - ./v2015/js/scripts/gerenciar.vps.js"
  juicyPathsFromGospider "$internalPathsRemovedDots";
 }
 
