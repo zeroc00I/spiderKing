@@ -15,18 +15,18 @@ function juicyPathsFromGospider(){
  internalPaths=$(echo -e "$1" | tr ']' ' ' | awk '/linkfinder/{print $4" "$NF}' )
  [ -z "$internalPaths" ] && printf "\n[Not Found] Internal Paths\n" && exit
  
- analizingCorrectPathWalk "$internalPaths"
+ echo -e "$internalPaths" | while read -r line; do 
+ analizingCorrectPathWalk "$line" & 
+ done
 }
 
 function analizingCorrectPathWalk(){
  printf '\n[Analizing Valid Path Walk]\n'
- echo -e "$1" | head
+ echo -e "$1"
  
- echo -e "$1" | while read -r line; do 
-
-  url=$(echo $line | awk '{print $1}');
+   url=$(echo $1 | awk '{print $1}');
   urlCount=$(echo $url | awk -F/ '{print NF-2}');
-  path=$(echo $line | awk '{print $2}' | sed 's#\.\/#\/#g' | sed 's#\/\/#\/#g' | sed 's#\/\/#\/#g');
+  path=$(echo $1 | awk '{print $2}' | sed 's#\.\/#\/#g' | sed 's#\/\/#\/#g' | sed 's#\/\/#\/#g');
 
    if [[ "$path" != /* ]];then
    	echo "[Fixing path] $path" # DEBUG
@@ -47,7 +47,6 @@ function analizingCorrectPathWalk(){
      done | anew
    fi
 
- done
  
  # awk -F/ '{for (path=3; path<NF;path++) print $1"//"$path"/"$NF}' 
 }
