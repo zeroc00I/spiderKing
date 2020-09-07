@@ -4,7 +4,7 @@ fileInput=$1;
 
 function gospiderPlus(){
  printf '\n[Gospidering]'
- spider=$(gospider -a -S "$1" -d 3 -c 300)
+ spider=$(timeout 10 gospider -a -S "$1" -d 3 -c 300)
  internalPathsRemovedDots=$(echo -e "$spider" | sed 's#\.\/#\/#g')
  juicyPathsFromGospider "$internalPathsRemovedDots";
 }
@@ -21,7 +21,7 @@ function juicyPathsFromGospider(){
 function analizingCorrectPathWalk(){
  printf '\n[Analizing Valid Path Walk]\n'
  echo -e "$1" | head
- allInternalPaths=$(
+ 
  echo -e "$1" | while read -r line; do 
 
   url=$(echo $line | awk '{print $1}');
@@ -42,14 +42,13 @@ function analizingCorrectPathWalk(){
 
    if [[ "$urlCount" -gt "1" && "$path" != *"http"* && "$path" != *"locale"* && url != *"locale"* ]];then
      for i in $(eval echo {1..$urlCount});do 
-     	echo $(echo $url | rev |cut -d/ -f $i- | rev)$path;
+     	pass=$(echo $(echo $url | rev |cut -d/ -f $i- | rev)$path);
+     	 onlyPathsUp "$pass"
      done | anew
    fi
 
- done )
+ done
  
- onlyPathsUp "$allInternalPaths"
-
  # awk -F/ '{for (path=3; path<NF;path++) print $1"//"$path"/"$NF}' 
 }
 
